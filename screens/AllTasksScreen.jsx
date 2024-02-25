@@ -1,19 +1,16 @@
 import React from "react";
 import { FlatList, Image, StyleSheet, Text, View } from "react-native";
 import IconButton from "../components/ui/IconButton";
-import { data } from "../data/data";
-const folderImage = require("../media/images/folder.png");
+import { useSelector } from "react-redux";
+import FolderContainer from "../components/FolderContainer";
 
 const renderFolderHandler = (itemData) => {
-  return (
-    <View style={styles.folderContainer}>
-      <Image source={folderImage} style={styles.image} />
-      <Text style={styles.folderName}>{itemData.item}</Text>
-    </View>
-  );
+  return <FolderContainer itemData={itemData} />;
 };
 
 const AllTasksScreen = ({ route, navigation }) => {
+  const folders = useSelector((state) => state.folders.folders);
+
   navigation.setOptions({
     headerRight: () => {
       return (
@@ -27,33 +24,38 @@ const AllTasksScreen = ({ route, navigation }) => {
   });
 
   return (
-    <FlatList
-      data={data.folderNames}
-      renderItem={renderFolderHandler}
-      alwaysBounceVertical={false}
-    />
+    <>
+      {folders.length > 0 && (
+        <FlatList
+          data={folders}
+          renderItem={renderFolderHandler}
+          alwaysBounceVertical={false}
+          keyExtractor={(item) => item.folderId}
+        />
+      )}
+      {folders.length == 0 && (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyContainerText}>
+            You don't have any folders yet
+          </Text>
+        </View>
+      )}
+    </>
   );
 };
 
 export default AllTasksScreen;
 
 const styles = StyleSheet.create({
-  image: {
-    width: 100,
-    height: 100,
-    resizeMode: "contain",
-  },
-  folderContainer: {
-    flexDirection: "row",
+  emptyContainer: {
+    flex: 1,
     alignItems: "center",
-    gap: 5,
-    marginBottom: 10,
-    borderBottomColor: "#8CB9BD",
-    borderBottomWidth: 1,
-    width: "100%",
+    justifyContent: "center",
+    marginTop: -100,
   },
-  folderName: {
-    fontSize: 18,
-    flexWrap: "wrap",
+  emptyContainerText: {
+    fontSize: 22,
+    color: "#7F7F7F",
+    fontWeight: 600,
   },
 });

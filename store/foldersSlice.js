@@ -1,13 +1,15 @@
 import { createSlice } from "@reduxjs/toolkit";
+import "react-native-get-random-values";
+import { v4 as uuidv4 } from "uuid";
 
 const foldersSlice = createSlice({
   name: "folders",
   initialState: {
-    folderNames: [],
+    folders: [],
   },
   reducers: {
     addFolder: (state, action) => {
-      state.folderNames.unshift(action.payload);
+      state.folders.unshift({ name: action.payload, folderId: uuidv4() });
     },
   },
 });

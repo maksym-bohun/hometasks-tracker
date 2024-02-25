@@ -3,14 +3,18 @@ import { StyleSheet, Text, TextInput, View } from "react-native";
 import ButtonPrimary from "../components/ui/ButtonPrimary";
 import ButtonSecondary from "../components/ui/ButtonSecondary";
 import { data } from "../data/data";
+import { useDispatch } from "react-redux";
+import { addFolder } from "../store/foldersSlice";
 
 const AddFolderScreen = ({ router, navigation }) => {
   const [currentInputValue, setCurrentInputValue] = useState("");
+  const dispatch = useDispatch();
 
   const addFolderHandler = () => {
     if (currentInputValue.trim() !== "")
       data.folderNames.unshift(currentInputValue);
-    navigation.navigate("All tasks");
+    dispatch(addFolder(currentInputValue));
+    navigation.navigate("All subjects");
   };
 
   return (
