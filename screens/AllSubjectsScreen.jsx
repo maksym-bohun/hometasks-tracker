@@ -8,7 +8,7 @@ const renderFolderHandler = (itemData) => {
   return <FolderContainer itemData={itemData} />;
 };
 
-const AllTasksScreen = ({ route, navigation }) => {
+const AllSubjectsScreen = ({ route, navigation }) => {
   const folders = useSelector((state) => state.folders.folders);
 
   navigation.setOptions({
@@ -44,7 +44,7 @@ const AllTasksScreen = ({ route, navigation }) => {
   );
 };
 
-export default AllTasksScreen;
+export default AllSubjectsScreen;
 
 const styles = StyleSheet.create({
   emptyContainer: {

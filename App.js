@@ -2,11 +2,13 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
-import AllTasksScreen from "./screens/AllTasksScreen";
 import AddFolderScreen from "./screens/AddFolderScreen";
 import { Provider } from "react-redux";
 import { store } from "./store/store";
+import CurrentSubjectScreen from "./screens/CurrentSubjectScreen";
 import CurrentTaskScreen from "./screens/CurrentTaskScreen";
+import AllSubjectsScreen from "./screens/AllSubjectsScreen";
+import AddTaskFormScreen from "./screens/AddTaskFormScreen";
 
 const Stack = createStackNavigator();
 
@@ -26,8 +28,13 @@ export default function App() {
               },
             }}
           >
-            <Stack.Screen name="All subjects" component={AllTasksScreen} />
+            <Stack.Screen name="All subjects" component={AllSubjectsScreen} />
+            <Stack.Screen
+              name="Current subject"
+              component={CurrentSubjectScreen}
+            />
             <Stack.Screen name="Current task" component={CurrentTaskScreen} />
+            <Stack.Screen name="Add Task Form" component={AddTaskFormScreen} />
             <Stack.Screen
               name="Add Folder"
               component={AddFolderScreen}

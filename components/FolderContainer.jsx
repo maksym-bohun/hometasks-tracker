@@ -9,7 +9,7 @@ const FolderContainer = ({ itemData }) => {
     <Pressable
       style={styles.folderContainer}
       onPress={() => {
-        navigation.navigate("Current task", {
+        navigation.navigate("Current subject", {
           folderId: itemData.item.folderId,
         });
       }}

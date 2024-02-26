@@ -1,53 +1,44 @@
 import React from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { FlatList, StyleSheet, Text, View } from "react-native";
 import { useSelector } from "react-redux";
-import ButtonPrimary from "../components/ui/ButtonPrimary";
 import ButtonSecondary from "../components/ui/ButtonSecondary";
-import MyLinearGradient from "../components/ui/MyLinearGradient";
+
+const renderTasks = (itemData) => {
+  return (
+    <View>
+      <Text>Task: {itemData.item.title}</Text>
+    </View>
+  );
+};
 
 const CurrentTaskScreen = ({ route, navigation }) => {
   const folders = useSelector((state) => state.folders.folders);
-  console.log("FOLDERS: ", folders);
+  const { folderId, task } = route.params;
+  const currentFolder = folders.find((folder) => folder.folderId === folderId);
+  const currentTasks = currentFolder.tasks[task.toLowerCase()];
 
   navigation.setOptions({
-    title: folders.find((folder) => {
-      return folder.folderId === route.params.folderId;
-    }).name,
+    title: `${currentFolder.name}: ${task}`,
   });
-  console.log("RENDERING");
+
+  const addTask = () => {
+    navigation.navigate("Add Task Form", {
+      folderId,
+      task: task.toLowerCase(),
+    });
+  };
+
   return (
     <View style={styles.container}>
-      {/* <View>
-        <Text style={styles.header}>Press button for adding new task</Text>
-      </View> */}
-
-      <View style={styles.allBlocksContainer}>
-        {/* <View style={styles.blocksContainer}> */}
-        <View style={styles.block}>
-          <MyLinearGradient colors={["#FFC100", "#FF7FBE"]}>
-            <Text style={styles.blockText}>Labs: 0</Text>
-          </MyLinearGradient>
-        </View>
-
-        <View style={styles.block}>
-          <MyLinearGradient colors={["#2CD0E8", "#FF59E1"]}>
-            <Text style={styles.blockText}>Hometasks: 0</Text>
-          </MyLinearGradient>
-        </View>
-        {/* </View> */}
-
-        {/* <View style={styles.blocksContainer}> */}
-        <View style={styles.block}>
-          <MyLinearGradient colors={["#F237FF", "#7225FB"]}>
-            <Text style={styles.blockText}>Presentations: 0</Text>
-          </MyLinearGradient>
-        </View>
-        <View style={styles.block}>
-          <MyLinearGradient colors={["#FF3D8C", "#FF9E2B"]}>
-            <Text style={styles.blockText}>Other: 0</Text>
-          </MyLinearGradient>
-        </View>
-        {/* </View> */}
+      <View style={styles.tasksContainer}>
+        {currentTasks.length == 0 ? (
+          <Text>No tasks</Text>
+        ) : (
+          <FlatList data={currentTasks} renderItem={renderTasks} />
+        )}
+      </View>
+      <View style={styles.buttonContainer}>
+        <ButtonSecondary onPress={addTask}>Add new task</ButtonSecondary>
       </View>
     </View>
   );
@@ -60,38 +51,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   tasksContainer: {
+    flex: 6,
+  },
+  buttonContainer: {
     flex: 1,
-  },
-
-  allBlocksContainer: {
-    flex: 5,
-    gap: 20,
-    marginTop: -150,
-    width: "100%",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  blocksContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-  },
-  block: {
-    width: "90%",
-    height: 80,
-    borderRadius: 10,
-  },
-
-  blockText: {
-    fontSize: 20,
-    textAlign: "center",
-    fontWeight: "bold",
-    color: "#fff",
-  },
-
-  header: {
-    fontSize: 22,
-    textAlign: "center",
-    padding: 10,
-    marginVertical: 15,
   },
 });
