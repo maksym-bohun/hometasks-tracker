@@ -18,6 +18,10 @@ const AddTaskFormScreen = ({ route, navigation }) => {
   const [description, setDescription] = useState("");
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
+  navigation.setOptions({
+    title: "Add Task",
+  });
+
   const dispatch = useDispatch();
 
   const showDatePicker = () => {

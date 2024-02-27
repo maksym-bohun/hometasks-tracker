@@ -7,17 +7,19 @@ import MyLinearGradient from "../components/ui/MyLinearGradient";
 
 const CurrentSubjectScreen = ({ route, navigation }) => {
   const folders = useSelector((state) => state.folders.folders);
+  const currentId = route.params.folderId;
+  const currentFolder = folders.find((folder) => {
+    return folder.folderId === currentId;
+  });
 
   navigation.setOptions({
-    title: folders.find((folder) => {
-      return folder.folderId === route.params.folderId;
-    }).name,
+    title: currentFolder.name,
   });
 
   const openTask = (task) => {
     navigation.navigate("Current task", {
-      folderId: route.params.folderId,
-      task,
+      folderId: currentId,
+      task: task,
     });
   };
 
@@ -31,13 +33,17 @@ const CurrentSubjectScreen = ({ route, navigation }) => {
         {/* <View style={styles.blocksContainer}> */}
         <Pressable onPress={() => openTask("Labs")} style={styles.block}>
           <MyLinearGradient colors={["#FFC100", "#FF7FBE"]}>
-            <Text style={styles.blockText}>Labs: 0</Text>
+            <Text style={styles.blockText}>
+              Labs: {currentFolder.tasks.labs.length}
+            </Text>
           </MyLinearGradient>
         </Pressable>
 
         <Pressable onPress={() => openTask("Hometasks")} style={styles.block}>
           <MyLinearGradient colors={["#2CD0E8", "#FF59E1"]}>
-            <Text style={styles.blockText}>Hometasks: 0</Text>
+            <Text style={styles.blockText}>
+              Hometasks: {currentFolder.tasks.hometasks.length}
+            </Text>
           </MyLinearGradient>
         </Pressable>
         {/* </View> */}
@@ -48,12 +54,16 @@ const CurrentSubjectScreen = ({ route, navigation }) => {
           style={styles.block}
         >
           <MyLinearGradient colors={["#F237FF", "#7225FB"]}>
-            <Text style={styles.blockText}>Presentations: 0</Text>
+            <Text style={styles.blockText}>
+              Presentations: {currentFolder.tasks.presentations.length}
+            </Text>
           </MyLinearGradient>
         </Pressable>
         <Pressable onPress={() => openTask("Other")} style={styles.block}>
           <MyLinearGradient colors={["#FF3D8C", "#FF9E2B"]}>
-            <Text style={styles.blockText}>Other: 0</Text>
+            <Text style={styles.blockText}>
+              Other: {currentFolder.tasks.other.length}
+            </Text>
           </MyLinearGradient>
         </Pressable>
         {/* </View> */}
