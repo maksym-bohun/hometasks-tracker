@@ -1,47 +1,58 @@
 import React from "react";
 import { FlatList, Image, StyleSheet, Text, View } from "react-native";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import ButtonSecondary from "../components/ui/ButtonSecondary";
-const taskIcon = require("../media/images/list.png");
-const descriptionIcon = require("../media/images/file.png");
-const deadlineIcon = require("../media/images/deadline.png");
-
-const renderTasks = (itemData) => {
-  const { deadline } = itemData.item;
-  return (
-    <View style={styles.taskContainer}>
-      <View style={styles.row}>
-        <Image source={taskIcon} style={styles.icon} />
-        <Text style={styles.text}>{itemData.item.title}</Text>
-      </View>
-      <View style={styles.row}>
-        <Image source={descriptionIcon} style={styles.icon} />
-        <Text style={styles.text}>{itemData.item.description}</Text>
-      </View>
-      <View style={styles.row}>
-        <Image source={deadlineIcon} style={styles.icon} />
-        <Text style={styles.text}>
-          {new Date(deadline).getDate()}{" "}
-          {String(new Date(deadline).getMonth() + 1).padStart(2, "0")}{" "}
-          {new Date(deadline).getFullYear()}
-        </Text>
-      </View>
-    </View>
-  );
-};
+import TaskContainer from "../components/TaskContainer";
+import { deleteTask } from "../store/foldersSlice";
 
 const CurrentTaskScreen = ({ route, navigation }) => {
   const folders = useSelector((state) => state.folders.folders);
   const { folderId, task } = route.params;
   const currentFolder = folders.find((folder) => folder.folderId === folderId);
   const currentTasks = currentFolder.tasks[task.toLowerCase()];
+  const dispatch = useDispatch();
+
+  const renderTasks = (itemData) => {
+    return (
+      <TaskContainer
+        itemData={itemData}
+        onDeleteItem={deleteItemHandler}
+        onUpdateItem={updateItemHandler}
+      />
+    );
+  };
+
+  const deleteItemHandler = (data) => {
+    console.log("data ", data);
+    dispatch(
+      deleteTask({
+        folderId,
+        taskName: task.toLowerCase(),
+        taskId: data.taskId,
+      })
+    );
+  };
+
+  const updateItemHandler = (data) => {
+    const { title, description, deadline } = data;
+    console.log("DATA", data);
+    navigation.navigate("Task Form", {
+      action: "update",
+      folderId,
+      taskId: data.taskId,
+      taskName: task.toLowerCase(),
+      title,
+      description,
+      date: deadline,
+    });
+  };
 
   navigation.setOptions({
     title: `${currentFolder.name}: ${task}`,
   });
 
   const addTask = () => {
-    navigation.navigate("Add Task Form", {
+    navigation.navigate("Task Form", {
       folderId,
       task: task.toLowerCase(),
     });
@@ -53,7 +64,12 @@ const CurrentTaskScreen = ({ route, navigation }) => {
         {currentTasks.length == 0 ? (
           <Text style={styles.emptyHeader}>You don't have any tasks yet</Text>
         ) : (
-          <FlatList data={currentTasks} renderItem={renderTasks} />
+          <FlatList
+            data={currentTasks}
+            renderItem={renderTasks}
+            alwaysBounceHorizontal={false}
+            alwaysBounceVertical={false}
+          />
         )}
       </View>
       <View style={styles.buttonContainer}>
@@ -70,34 +86,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   tasksContainer: {
-    flex: 6,
+    flex: 4,
   },
   buttonContainer: {
     flex: 1,
   },
-  icon: {
-    width: 26,
-    height: 26,
-  },
-  row: {
-    flexDirection: "row",
-    gap: 10,
-    alignItems: "flex-start",
-    flexWrap: "wrap",
-  },
-  taskContainer: {
-    margin: 10,
-    padding: 10,
-    backgroundColor: "#f7ebdb",
-    marginVertical: 5,
-    borderRadius: 10,
-    gap: 20,
-    flexWrap: "wrap",
-  },
-  text: {
-    fontSize: 18,
-    flexWrap: "wrap",
-  },
+
   emptyHeader: {
     textAlign: "center",
     marginTop: 30,

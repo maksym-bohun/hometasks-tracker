@@ -24,12 +24,40 @@ const foldersSlice = createSlice({
         title,
         description,
         deadline,
+        taskId: uuidv4(),
       };
       folder.tasks[action.payload.taskName].push(taskToAdd);
+    },
+    deleteTask: (state, action) => {
+      const { folderId, taskId, taskName } = action.payload;
+      const folder = state.folders.find(
+        (folder) => folder.folderId === folderId
+      );
+      const taskIndex = folder.tasks[taskName].findIndex(
+        (task) => task.taskId === taskId
+      );
+      folder.tasks[taskName].splice(taskIndex, 1);
+    },
+
+    updateTask: (state, action) => {
+      const { folderId, taskId, taskName, taskBody } = action.payload;
+      const folder = state.folders.find(
+        (folder) => folder.folderId === folderId
+      );
+
+      console.log("folder.tasks[taskName]", folder.tasks[taskName]);
+      const taskIndex = folder.tasks[taskName].findIndex(
+        (task) => task.taskId === taskId
+      );
+      folder.tasks[taskName][taskIndex].title = taskBody.title;
+      folder.tasks[taskName][taskIndex].description = taskBody.description;
+      folder.tasks[taskName][taskIndex].deadline = taskBody.deadline;
     },
   },
 });
 
 export const addFolder = foldersSlice.actions.addFolder;
 export const addTask = foldersSlice.actions.addTask;
+export const deleteTask = foldersSlice.actions.deleteTask;
+export const updateTask = foldersSlice.actions.updateTask;
 export default foldersSlice.reducer;

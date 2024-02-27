@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   ScrollView,
@@ -10,13 +10,31 @@ import {
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import ButtonPrimary from "../components/ui/ButtonPrimary";
 import { useDispatch } from "react-redux";
-import { addTask } from "../store/foldersSlice";
+import { addTask, updateTask } from "../store/foldersSlice";
 
 const AddTaskFormScreen = ({ route, navigation }) => {
   const [date, setDate] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+
+  const defaultValues = {
+    title: route.params.title || "",
+    description: route.params.description || "",
+    date: route.params.date || "",
+  };
+
+  const action = route.params.action || "add";
+
+  useEffect(() => {
+    console.log("defaultValues.date ", defaultValues.date);
+    console.log("route.params ", route.params);
+    if (action === "update") {
+      setTitle(defaultValues.title);
+      setDescription(defaultValues.description);
+      setDate(new Date(defaultValues.date));
+    }
+  }, []);
 
   navigation.setOptions({
     title: "Add Task",
@@ -39,6 +57,7 @@ const AddTaskFormScreen = ({ route, navigation }) => {
 
   const getDate = () => {
     let tempDate = date.toString().split(" ");
+    console.log("DATE  ", date);
     return date !== ""
       ? `${tempDate[0]} ${tempDate[1]} ${tempDate[2]} ${tempDate[3]}`
       : "";
@@ -65,55 +84,80 @@ const AddTaskFormScreen = ({ route, navigation }) => {
       );
       navigation.goBack();
     } else {
-      console.log(title, description, date);
+      console.log("ERROR ", title, description, date);
     }
   };
+
+  const updateTaskHandler = () => {
+    if (title !== "" && description !== "" && date !== "") {
+      dispatch(
+        updateTask({
+          folderId: route.params.folderId,
+          taskBody: { title, description, deadline: date.toISOString() },
+          taskName: route.params.taskName,
+          taskId: route.params.taskId,
+        })
+      );
+      navigation.goBack();
+    } else {
+      console.log("ERROR ", title, description, date);
+    }
+  };
+
+  console.log("getDate()", getDate());
 
   return (
     <View style={styles.mainContainer}>
       <ScrollView style={styles.scrollView} alwaysBounceVertical={false}>
         <View style={styles.container}>
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Title</Text>
-            <TextInput
-              placeholder="Enter title"
-              style={styles.input}
-              onChangeText={(text) => changeInputHandler(text, "title")}
-            />
-          </View>
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Description</Text>
-            <TextInput
-              placeholder="Enter description"
-              style={styles.input}
-              multiline={true}
-              onChangeText={(text) => changeInputHandler(text, "description")}
-            />
-          </View>
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Deadline</Text>
-            <View style={styles.dateContainer}>
+          <View style={styles.containerInScrollView}>
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Title</Text>
               <TextInput
-                style={[styles.input, styles.dateInput]}
-                value={getDate()}
-                placeholder="Date..."
-                // caretHidden={true}
-                editable={false}
+                placeholder="Enter title"
+                style={styles.input}
+                onChangeText={(text) => changeInputHandler(text, "title")}
+                defaultValue={defaultValues.title}
               />
-              <Button onPress={showDatePicker} title="Set Date" />
-              <DateTimePickerModal
-                isVisible={isDatePickerVisible}
-                mode="date"
-                onConfirm={handleConfirm}
-                onCancel={hideDatePicker}
+            </View>
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Description</Text>
+              <TextInput
+                placeholder="Enter description"
+                style={[styles.input, styles.multilineInput]}
+                multiline={true}
+                onChangeText={(text) => changeInputHandler(text, "description")}
+                defaultValue={defaultValues.description}
               />
+            </View>
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Deadline</Text>
+              <View style={styles.dateContainer}>
+                <TextInput
+                  style={[styles.input, styles.dateInput]}
+                  value={getDate()}
+                  placeholder="Date..."
+                  editable={false}
+                />
+                <Button onPress={showDatePicker} title="Set Date" />
+                <DateTimePickerModal
+                  isVisible={isDatePickerVisible}
+                  mode="date"
+                  onConfirm={handleConfirm}
+                  onCancel={hideDatePicker}
+                />
+              </View>
             </View>
           </View>
         </View>
+        <View style={styles.buttonContainer}>
+          <ButtonPrimary
+            onPress={action === "add" ? addTaskHandler : updateTaskHandler}
+          >
+            Confirm
+          </ButtonPrimary>
+        </View>
       </ScrollView>
-      <View style={styles.buttonContainer}>
-        <ButtonPrimary onPress={addTaskHandler}>Confirm</ButtonPrimary>
-      </View>
     </View>
   );
 };
@@ -125,20 +169,23 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   container: {
-    alignItems: "center",
     justifyContent: "start",
-    marginTop: 50,
+    marginTop: 40,
     gap: 20,
   },
   scrollView: {
-    flex: 1,
+    // flex: 1,
+    padding: 10,
+  },
+  containerInScrollView: {
+    justifyContent: "center",
+    gap: 20,
   },
   buttonContainer: {
-    flex: 1,
+    // flex: 1,
+    marginTop: 20,
   },
-  inputContainer: {
-    width: "90%",
-  },
+  inputContainer: {},
   input: {
     fontSize: 18,
     padding: 5,
@@ -157,5 +204,8 @@ const styles = StyleSheet.create({
   },
   dateInput: {
     flex: 2,
+  },
+  multilineInput: {
+    maxHeight: 10 * 18, // 5 строк * высота строки
   },
 });

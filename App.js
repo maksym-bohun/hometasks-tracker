@@ -34,7 +34,7 @@ export default function App() {
               component={CurrentSubjectScreen}
             />
             <Stack.Screen name="Current task" component={CurrentTaskScreen} />
-            <Stack.Screen name="Add Task Form" component={AddTaskFormScreen} />
+            <Stack.Screen name="Task Form" component={AddTaskFormScreen} />
             <Stack.Screen
               name="Add Folder"
               component={AddFolderScreen}
