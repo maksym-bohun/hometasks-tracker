@@ -55,11 +55,13 @@ const TaskContainer = ({ itemData, onDeleteItem, onUpdateItem }) => {
         data={[itemData]}
         renderItem={renderItem}
         renderHiddenItem={renderHiddenItem}
-        leftOpenValue={85}
-        rightOpenValue={-85}
+        leftOpenValue={95}
+        rightOpenValue={-95}
         previewRowKey={"0"}
         previewOpenValue={-40}
         previewOpenDelay={3000}
+        stopLeftSwipe={95}
+        stopRightSwipe={-95}
       />
     </View>
   );
@@ -79,7 +81,6 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
   },
   taskContainer: {
-    margin: 10,
     marginVertical: 5,
     padding: 10,
     backgroundColor: "#f7ebdb",

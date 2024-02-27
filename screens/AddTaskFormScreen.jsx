@@ -11,11 +11,17 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import ButtonPrimary from "../components/ui/ButtonPrimary";
 import { useDispatch } from "react-redux";
 import { addTask, updateTask } from "../store/foldersSlice";
+import validator from "validator";
 
 const AddTaskFormScreen = ({ route, navigation }) => {
   const [date, setDate] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [invalidInputs, setInvalidInputs] = useState({
+    title: false,
+    description: false,
+    date: false,
+  });
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
   const defaultValues = {
@@ -37,7 +43,7 @@ const AddTaskFormScreen = ({ route, navigation }) => {
   }, []);
 
   navigation.setOptions({
-    title: "Add Task",
+    title: action === "add" ? "Add Task" : "Update task",
   });
 
   const dispatch = useDispatch();
@@ -73,8 +79,44 @@ const AddTaskFormScreen = ({ route, navigation }) => {
     }
   };
 
+  const checkInputs = () => {
+    if (
+      !validator.isEmpty(title) &&
+      !validator.isEmpty(description) &&
+      date instanceof Date
+    ) {
+      return true;
+    } else {
+      if (validator.isEmpty(title)) {
+        setInvalidInputs((prevInputs) => ({ ...prevInputs, title: true }));
+      } else {
+        setInvalidInputs((prevInputs) => ({ ...prevInputs, title: false }));
+      }
+
+      if (validator.isEmpty(description)) {
+        setInvalidInputs((prevInputs) => ({
+          ...prevInputs,
+          description: true,
+        }));
+      } else {
+        setInvalidInputs((prevInputs) => ({
+          ...prevInputs,
+          description: false,
+        }));
+      }
+
+      if (!(date instanceof Date)) {
+        setInvalidInputs((prevInputs) => ({ ...prevInputs, date: true }));
+      } else {
+        setInvalidInputs((prevInputs) => ({ ...prevInputs, date: false }));
+      }
+      return false;
+    }
+  };
+
   const addTaskHandler = () => {
-    if (title !== "" && description !== "" && date !== "") {
+    if (checkInputs()) {
+      setInvalidInputs({ title: false, description: false, date: false });
       dispatch(
         addTask({
           folderId: route.params.folderId,
@@ -83,13 +125,11 @@ const AddTaskFormScreen = ({ route, navigation }) => {
         })
       );
       navigation.goBack();
-    } else {
-      console.log("ERROR ", title, description, date);
     }
   };
 
   const updateTaskHandler = () => {
-    if (title !== "" && description !== "" && date !== "") {
+    if (checkInputs()) {
       dispatch(
         updateTask({
           folderId: route.params.folderId,
@@ -99,8 +139,6 @@ const AddTaskFormScreen = ({ route, navigation }) => {
         })
       );
       navigation.goBack();
-    } else {
-      console.log("ERROR ", title, description, date);
     }
   };
 
@@ -115,7 +153,7 @@ const AddTaskFormScreen = ({ route, navigation }) => {
               <Text style={styles.label}>Title</Text>
               <TextInput
                 placeholder="Enter title"
-                style={styles.input}
+                style={[styles.input, invalidInputs.title && styles.invalid]}
                 onChangeText={(text) => changeInputHandler(text, "title")}
                 defaultValue={defaultValues.title}
               />
@@ -124,7 +162,11 @@ const AddTaskFormScreen = ({ route, navigation }) => {
               <Text style={styles.label}>Description</Text>
               <TextInput
                 placeholder="Enter description"
-                style={[styles.input, styles.multilineInput]}
+                style={[
+                  styles.input,
+                  invalidInputs.description && styles.invalid,
+                  styles.multilineInput,
+                ]}
                 multiline={true}
                 onChangeText={(text) => changeInputHandler(text, "description")}
                 defaultValue={defaultValues.description}
@@ -134,7 +176,11 @@ const AddTaskFormScreen = ({ route, navigation }) => {
               <Text style={styles.label}>Deadline</Text>
               <View style={styles.dateContainer}>
                 <TextInput
-                  style={[styles.input, styles.dateInput]}
+                  style={[
+                    styles.input,
+                    invalidInputs.date && styles.invalid,
+                    styles.dateInput,
+                  ]}
                   value={getDate()}
                   placeholder="Date..."
                   editable={false}
@@ -145,6 +191,7 @@ const AddTaskFormScreen = ({ route, navigation }) => {
                   mode="date"
                   onConfirm={handleConfirm}
                   onCancel={hideDatePicker}
+                  minimumDate={new Date()}
                 />
               </View>
             </View>
@@ -206,6 +253,10 @@ const styles = StyleSheet.create({
     flex: 2,
   },
   multilineInput: {
-    maxHeight: 10 * 18, // 5 строк * высота строки
+    maxHeight: 10 * 18,
+  },
+  invalid: {
+    backgroundColor: "#F7DADA",
+    borderColor: "#e55959",
   },
 });
