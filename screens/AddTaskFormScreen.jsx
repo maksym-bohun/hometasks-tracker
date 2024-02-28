@@ -9,8 +9,8 @@ import {
 } from "react-native";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import ButtonPrimary from "../components/ui/ButtonPrimary";
-import { useDispatch } from "react-redux";
-import { addTask, updateTask } from "../store/foldersSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { addTask, saveFolders, updateTask } from "../store/foldersSlice";
 import validator from "validator";
 
 const AddTaskFormScreen = ({ route, navigation }) => {
@@ -33,18 +33,12 @@ const AddTaskFormScreen = ({ route, navigation }) => {
   const action = route.params.action || "add";
 
   useEffect(() => {
-    console.log("defaultValues.date ", defaultValues.date);
-    console.log("route.params ", route.params);
     if (action === "update") {
       setTitle(defaultValues.title);
       setDescription(defaultValues.description);
       setDate(new Date(defaultValues.date));
     }
   }, []);
-
-  navigation.setOptions({
-    title: action === "add" ? "Add Task" : "Update task",
-  });
 
   const dispatch = useDispatch();
 
@@ -63,7 +57,6 @@ const AddTaskFormScreen = ({ route, navigation }) => {
 
   const getDate = () => {
     let tempDate = date.toString().split(" ");
-    console.log("DATE  ", date);
     return date !== ""
       ? `${tempDate[0]} ${tempDate[1]} ${tempDate[2]} ${tempDate[3]}`
       : "";
@@ -124,6 +117,7 @@ const AddTaskFormScreen = ({ route, navigation }) => {
           taskName: route.params.task,
         })
       );
+
       navigation.goBack();
     }
   };
@@ -138,11 +132,10 @@ const AddTaskFormScreen = ({ route, navigation }) => {
           taskId: route.params.taskId,
         })
       );
+
       navigation.goBack();
     }
   };
-
-  console.log("getDate()", getDate());
 
   return (
     <View style={styles.mainContainer}>

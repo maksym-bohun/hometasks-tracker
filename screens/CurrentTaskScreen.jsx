@@ -3,7 +3,7 @@ import { FlatList, Image, StyleSheet, Text, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import ButtonSecondary from "../components/ui/ButtonSecondary";
 import TaskContainer from "../components/TaskContainer";
-import { deleteTask } from "../store/foldersSlice";
+import { deleteTask, saveFolders } from "../store/foldersSlice";
 
 const CurrentTaskScreen = ({ route, navigation }) => {
   const folders = useSelector((state) => state.folders.folders);
@@ -23,7 +23,6 @@ const CurrentTaskScreen = ({ route, navigation }) => {
   };
 
   const deleteItemHandler = (data) => {
-    console.log("data ", data);
     dispatch(
       deleteTask({
         folderId,
@@ -35,7 +34,6 @@ const CurrentTaskScreen = ({ route, navigation }) => {
 
   const updateItemHandler = (data) => {
     const { title, description, deadline } = data;
-    console.log("DATA", data);
     navigation.navigate("Task Form", {
       action: "update",
       folderId,
@@ -47,9 +45,9 @@ const CurrentTaskScreen = ({ route, navigation }) => {
     });
   };
 
-  navigation.setOptions({
-    title: `${currentFolder.name}: ${task}`,
-  });
+  // navigation.setOptions({
+  //   title: `${currentFolder.name}: ${task}`,
+  // });
 
   const addTask = () => {
     navigation.navigate("Task Form", {

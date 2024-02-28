@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createSlice } from "@reduxjs/toolkit";
 import "react-native-get-random-values";
 import { v4 as uuidv4 } from "uuid";
@@ -8,6 +9,11 @@ const foldersSlice = createSlice({
     folders: [],
   },
   reducers: {
+    setFolders: (state, action) => {
+      console.log("action.payload, ", action.payload);
+      state.folders = action.payload;
+    },
+
     addFolder: (state, action) => {
       state.folders.unshift({
         name: action.payload,
@@ -62,9 +68,28 @@ const foldersSlice = createSlice({
   },
 });
 
-export const addFolder = foldersSlice.actions.addFolder;
-export const deleteFolder = foldersSlice.actions.deleteFolder;
-export const addTask = foldersSlice.actions.addTask;
-export const deleteTask = foldersSlice.actions.deleteTask;
-export const updateTask = foldersSlice.actions.updateTask;
+export const loadFolders = () => async (dispatch) => {
+  try {
+    const storedFolders = await AsyncStorage.getItem("folders");
+    if (storedFolders) {
+      dispatch(
+        foldersSlice.actions.setFolders(JSON.parse(storedFolders).folders)
+      );
+    }
+  } catch (error) {
+    console.error("Error loading folders:", error);
+  }
+};
+
+export const saveFolders = (folders) => async (dispatch) => {
+  try {
+    await AsyncStorage.setItem("folders", JSON.stringify(folders));
+  } catch (error) {
+    console.error("Error saving folders:", error);
+  }
+};
+
+export const { addFolder, deleteFolder, addTask, deleteTask, updateTask } =
+  foldersSlice.actions;
+
 export default foldersSlice.reducer;

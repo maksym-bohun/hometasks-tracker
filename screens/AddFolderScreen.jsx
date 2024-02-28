@@ -4,7 +4,7 @@ import ButtonPrimary from "../components/ui/ButtonPrimary";
 import ButtonSecondary from "../components/ui/ButtonSecondary";
 import { data } from "../data/data";
 import { useDispatch } from "react-redux";
-import { addFolder } from "../store/foldersSlice";
+import { addFolder, saveFolders } from "../store/foldersSlice";
 import validator from "validator";
 
 const AddFolderScreen = ({ router, navigation }) => {

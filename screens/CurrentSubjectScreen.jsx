@@ -11,7 +11,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import MyLinearGradient from "../components/ui/MyLinearGradient";
 import DeleteButton from "../components/ui/DeleteButton";
-import { deleteFolder } from "../store/foldersSlice";
+import { deleteFolder, saveFolders } from "../store/foldersSlice";
 
 const CurrentSubjectScreen = ({ route, navigation }) => {
   const [wantToDelete, setWantToDelete] = useState(false);
@@ -32,15 +32,11 @@ const CurrentSubjectScreen = ({ route, navigation }) => {
     }
   }, [wantToDelete]);
 
-  if (currentFolder)
-    navigation.setOptions({
-      title: currentFolder.name,
-    });
-
   const openTask = (task) => {
     navigation.navigate("Current task", {
       folderId: currentId,
       task: task,
+      folderName: currentFolder.name,
     });
   };
 

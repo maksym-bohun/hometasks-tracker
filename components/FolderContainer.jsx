@@ -11,6 +11,7 @@ const FolderContainer = ({ itemData }) => {
       onPress={() => {
         navigation.navigate("Current subject", {
           folderId: itemData.item.folderId,
+          folderName: itemData.item.name,
         });
       }}
     >
@@ -38,6 +39,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   folderName: {
+    flex: 2,
     fontSize: 18,
     flexWrap: "wrap",
   },

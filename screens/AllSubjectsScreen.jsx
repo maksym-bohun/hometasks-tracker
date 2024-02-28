@@ -11,17 +11,7 @@ const renderFolderHandler = (itemData) => {
 const AllSubjectsScreen = ({ route, navigation }) => {
   const folders = useSelector((state) => state.folders.folders);
 
-  navigation.setOptions({
-    headerRight: () => {
-      return (
-        <IconButton
-          iconName="pluscircleo"
-          size={24}
-          onPress={() => navigation.navigate("Add Folder")}
-        />
-      );
-    },
-  });
+  console.log("folders.length ", folders);
 
   return (
     <>
