@@ -5,16 +5,21 @@ import ButtonSecondary from "../components/ui/ButtonSecondary";
 import { data } from "../data/data";
 import { useDispatch } from "react-redux";
 import { addFolder } from "../store/foldersSlice";
+import validator from "validator";
 
 const AddFolderScreen = ({ router, navigation }) => {
   const [currentInputValue, setCurrentInputValue] = useState("");
+  const [inputIsInvalid, setInputIsInvalid] = useState(false);
   const dispatch = useDispatch();
 
   const addFolderHandler = () => {
-    if (currentInputValue.trim() !== "")
-      data.folderNames.unshift(currentInputValue);
-    dispatch(addFolder(currentInputValue));
-    navigation.navigate("All subjects");
+    if (!validator.isEmpty(currentInputValue)) {
+      dispatch(addFolder(currentInputValue));
+      navigation.navigate("All subjects");
+      setInputIsInvalid(false);
+    } else {
+      setInputIsInvalid(true);
+    }
   };
 
   return (
@@ -22,7 +27,7 @@ const AddFolderScreen = ({ router, navigation }) => {
       <Text style={styles.title}>Enter folder name</Text>
       <TextInput
         placeholder="Folder name"
-        style={styles.input}
+        style={[styles.input, inputIsInvalid && styles.invalid]}
         onChangeText={(value) => setCurrentInputValue(value)}
       />
       <View style={styles.actions}>
@@ -61,5 +66,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     gap: 20,
+  },
+  invalid: {
+    backgroundColor: "#F7DADA",
+    borderColor: "#e55959",
   },
 });

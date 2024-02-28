@@ -1,13 +1,18 @@
 import React from "react";
-import { Pressable, StyleSheet, Text, TouchableOpacity } from "react-native";
+import { Pressable, StyleSheet, Text } from "react-native";
 
-const ButtonPrimary = ({ children, onPress }) => {
+const ButtonPrimary = ({ children, onPress, textStyle, containerStyle }) => {
   return (
-    <TouchableOpacity style={styles.button}>
-      <Pressable onPress={onPress}>
-        <Text style={styles.text}>{children}</Text>
-      </Pressable>
-    </TouchableOpacity>
+    <Pressable
+      onPress={onPress}
+      style={({ pressed }) => [
+        styles.button,
+        containerStyle,
+        pressed ? styles.buttonPressed : null,
+      ]}
+    >
+      <Text style={[styles.text, textStyle]}>{children}</Text>
+    </Pressable>
   );
 };
 
@@ -31,5 +36,8 @@ const styles = StyleSheet.create({
     fontWeight: "600",
 
     textTransform: "uppercase",
+  },
+  buttonPressed: {
+    opacity: 0.5,
   },
 });

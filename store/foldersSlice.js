@@ -15,6 +15,13 @@ const foldersSlice = createSlice({
         tasks: { labs: [], hometasks: [], presentations: [], other: [] },
       });
     },
+    deleteFolder: (state, action) => {
+      const folderIndex = state.folders.findIndex(
+        (folder) => folder.folderId === action.payload.folderId
+      );
+      if (folderIndex !== -1) state.folders.splice(folderIndex, 1);
+      else return;
+    },
     addTask: (state, action) => {
       const folder = state.folders.find(
         (folder) => folder.folderId === action.payload.folderId
@@ -45,7 +52,6 @@ const foldersSlice = createSlice({
         (folder) => folder.folderId === folderId
       );
 
-      console.log("folder.tasks[taskName]", folder.tasks[taskName]);
       const taskIndex = folder.tasks[taskName].findIndex(
         (task) => task.taskId === taskId
       );
@@ -57,6 +63,7 @@ const foldersSlice = createSlice({
 });
 
 export const addFolder = foldersSlice.actions.addFolder;
+export const deleteFolder = foldersSlice.actions.deleteFolder;
 export const addTask = foldersSlice.actions.addTask;
 export const deleteTask = foldersSlice.actions.deleteTask;
 export const updateTask = foldersSlice.actions.updateTask;

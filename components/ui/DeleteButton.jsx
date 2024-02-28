@@ -1,7 +1,8 @@
 import React from "react";
-import { Pressable, StyleSheet, Text, TouchableOpacity } from "react-native";
+import { Pressable, StyleSheet, Text } from "react-native";
+import { Feather } from "@expo/vector-icons";
 
-const ButtonSecondary = ({ children, onPress, textStyle, containerStyle }) => {
+const DeleteButton = ({ children, onPress, textStyle, containerStyle }) => {
   return (
     <Pressable
       onPress={onPress}
@@ -11,26 +12,30 @@ const ButtonSecondary = ({ children, onPress, textStyle, containerStyle }) => {
         pressed ? styles.buttonPressed : null,
       ]}
     >
+      <Feather name="trash-2" size={24} color="#bb1a1a" />
       <Text style={[styles.text, textStyle]}>{children}</Text>
     </Pressable>
   );
 };
 
-export default ButtonSecondary;
+export default DeleteButton;
 
 const styles = StyleSheet.create({
   button: {
-    borderColor: "#a47148",
-    borderWidth: 2,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
     paddingHorizontal: 20,
     paddingVertical: 10,
+    borderRadius: 10,
+    borderColor: "#bb1a1a",
+    borderWidth: 2,
     marginVertical: 20,
     alignSelf: "center",
-    borderRadius: 10,
   },
   text: {
     textAlign: "center",
-    color: "#a47148",
+    color: "#bb1a1a",
     fontWeight: "600",
     fontSize: 16,
     textTransform: "uppercase",
